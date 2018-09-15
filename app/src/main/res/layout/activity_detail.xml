@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/movieThumbnailImageHeight"
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?android:attr/colorPrimary"
+            app:expandedTitleMarginEnd="48dp"
+            app:expandedTitleMarginStart="16dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <ImageView
+                android:id="@+id/detail_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax"
+                tools:src="@mipmap/ic_launcher"
+                android:contentDescription="@string/thumbnail_description" />
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/view_margin_16"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/title_tv"
+                    style="@style/StandardTextView"
+                    android:textAllCaps="true"
+                    android:textSize="@dimen/movie_name_text_size"
+                    android:textStyle="bold"
+                    tools:text="Tomorrow Never Dies" />
+
+                <TextView
+                    android:id="@+id/release_date_header_tv"
+                    style="@style/StandardTextView"
+                    android:layout_marginBottom="6dp"
+                    android:drawablePadding="@dimen/dp_6"
+                    android:drawableStart="@drawable/ic_date_range"
+                    android:drawableTint="@color/colorPrimary"
+                    android:text="@string/release_date"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/release_date_tv"
+                    style="@style/StandardTextView"
+                    android:textSize="@dimen/standard_text_size"
+                    tools:text="01/09/2018" />
+
+                <TextView
+                    android:id="@+id/rating_header_tv"
+                    style="@style/StandardTextView"
+                    android:layout_marginBottom="6dp"
+                    android:drawablePadding="@dimen/dp_6"
+                    android:drawableStart="@drawable/ic_thumbs_up_down"
+                    android:drawableTint="@color/colorPrimary"
+                    android:text="@string/rating_header"
+                    android:textSize="@dimen/title_text_size" />
+
+                <RatingBar
+                    android:id="@+id/voter_rating_bar"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/view_margin_16"
+                    android:numStars="10"
+                    android:stepSize="0.1"
+                    tools:rating="4.5" />
+
+
+                <TextView
+                    android:id="@+id/synopsis_headerTv"
+                    style="@style/StandardTextView"
+                    android:layout_marginBottom="@dimen/dp_8"
+                    android:layout_marginTop="@dimen/dp_8"
+                    android:drawablePadding="@dimen/dp_6"
+                    android:drawableStart="@drawable/ic_movie"
+                    android:drawableTint="@color/colorPrimary"
+                    android:text="@string/synopsis_header"
+                    android:textAllCaps="true"
+                    android:textSize="@dimen/standard_text_size" />
+
+                <TextView
+                    android:id="@+id/synopsis_tv"
+                    style="@style/StandardTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/detail_margin_bottom"
+                    android:textSize="@dimen/standard_text_size"
+                    tools:text=" blah blah blah blah blah blah blah blah blah v blah blah blah blah /n
+                    blahblahblahblahblahblahblahblahblahblahblahblahblah" />
+
+            </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.design.widget.CoordinatorLayout>

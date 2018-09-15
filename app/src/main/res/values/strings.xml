@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">MovieJunkie</string>
+
+    <!-- Placeholder no movies text -->
+    <string name="placeholder_no_movies">No Movies</string>
+
+    <!-- Display text when user offline -->
+    <string name="user_offline">No wifi connection found.\n Please check your network settings,
+        turn off airline mode, or try again later.</string>
+
+    <!-- display text when no movie items are found -->
+    <string name="no_movies_found">No movies were found, please try again later.</string>
+
+    <string name="release_date">Release Date</string>
+
+    <string name="synopsis_header">Synopsis</string>
+
+    <string name="rating_header">Voter Rating</string>
+
+    <string name="settings_menu_item">Settings</string>
+
+    <string name="settings_title">Movie Settings</string>
+
+    <string name="thumbnail_description">Thumbnail of movie poster</string>
+
+    <!-- Strings For Order-By Preference [CHAR LIMIT=30] -->
+    <string name="settings_order_by_label">Order by </string>
+    <string name="settings_order_by_key" translatable="false">order_by</string>
+    <string name="settings_order_by_default" translatable="false">@string/settings_order_by_popularity_value</string>
+
+    <!-- Label for order by popularity [CHAR LIMIT=20] -->
+    <string name="settings_order_by_popularity_label">Most Popular</string>
+    <string name="settings_order_by_popularity_value" translatable="false">popularity.desc</string>
+
+    <!-- Label for order by top rated[CHAR LIMIT=20] -->
+    <string name="settings_order_by_top_rated_label">Top Rated</string>
+    <string name="settings_order_by_top_rated_value" translatable="false">vote_average.desc</string>
+</resources>
