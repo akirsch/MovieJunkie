@@ -40,7 +40,7 @@ class NetworkUtils {
 
     // constants for creating complete url for thumbnail image
     private final static String THUMBNAIL_BASE_URL = "http://image.tmdb.org/t/p/";
-    private final static String SIZE_VALUE = "w185";
+    private final static String SIZE_VALUE = "w500";
 
     private NetworkUtils() {
     }

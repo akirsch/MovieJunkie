@@ -30,9 +30,9 @@
 
     <!-- Label for order by popularity [CHAR LIMIT=20] -->
     <string name="settings_order_by_popularity_label">Most Popular</string>
-    <string name="settings_order_by_popularity_value" translatable="false">popularity.desc</string>
+    <string name="settings_order_by_popularity_value">popular</string>
 
     <!-- Label for order by top rated[CHAR LIMIT=20] -->
     <string name="settings_order_by_top_rated_label">Top Rated</string>
-    <string name="settings_order_by_top_rated_value" translatable="false">vote_average.desc</string>
+    <string name="settings_order_by_top_rated_value" translatable="false">top_rated</string>
 </resources>

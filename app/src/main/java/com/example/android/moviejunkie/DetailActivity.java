@@ -28,8 +28,6 @@ public class DetailActivity extends AppCompatActivity {
     private RatingBar voterAverageRatingBar;
     private TextView synopsisTv;
 
-    private String posterUrl;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +40,9 @@ public class DetailActivity extends AppCompatActivity {
         synopsisTv = findViewById(R.id.synopsis_tv);
 
         final Intent intentThatStartedThisActivity = getIntent();
+
+        // get movie item sent by intent from MainActivity
+        final Movie selectedMovie = (Movie) intentThatStartedThisActivity.getSerializableExtra(Constants.MOVIE_OBJECT_KEY);
 
         // Enable up navigation to parent Activity
         // find Toolbar view in layout
@@ -65,8 +66,8 @@ public class DetailActivity extends AppCompatActivity {
                 if (scrollRange == -1) {
                     scrollRange = appBarLayout.getTotalScrollRange();
                 }
-                if (scrollRange + verticalOffset == 0 && intentThatStartedThisActivity != null) {
-                    collapsingToolbarLayout.setTitle(intentThatStartedThisActivity.getStringExtra(Constants.TITLE_KEY));
+                if (scrollRange + verticalOffset == 0 && selectedMovie.getTitle() != null) {
+                    collapsingToolbarLayout.setTitle(selectedMovie.getTitle());
                     isShow = true;
                 } else if (isShow) {
                     collapsingToolbarLayout.setTitle(" ");
@@ -76,38 +77,30 @@ public class DetailActivity extends AppCompatActivity {
         });
 
 
-        if (intentThatStartedThisActivity != null) {
-            if (intentThatStartedThisActivity.hasExtra(Constants.POSTER_URL_KEY)) {
-                posterUrl = intentThatStartedThisActivity.getStringExtra(Constants.POSTER_URL_KEY);
-
-                // use Glide to get image from url and put it in image view
-                Glide.with(this)
-                        .load(posterUrl)
-                        .apply(new RequestOptions()
-                                .centerCrop()
-                                .format(DecodeFormat.PREFER_ARGB_8888)
-                                .override(Target.SIZE_ORIGINAL))
-                        .into(thumbnailIv);
-            }
-            if (intentThatStartedThisActivity.hasExtra(Constants.TITLE_KEY)) {
-                titleTv.setText(intentThatStartedThisActivity.getStringExtra(Constants.TITLE_KEY));
-            }
-            if (intentThatStartedThisActivity.hasExtra(Constants.RELEASE_DATE_KEY)) {
-                releaseDateTv.setText(intentThatStartedThisActivity.getStringExtra(Constants.RELEASE_DATE_KEY));
-            }
-            if (intentThatStartedThisActivity.hasExtra(Constants.SYNOPSIS_KEY)) {
-                synopsisTv.setText(intentThatStartedThisActivity.getStringExtra(Constants.SYNOPSIS_KEY));
-            }
-            if (intentThatStartedThisActivity.hasExtra(Constants.VOTER_RATING_KEY)) {
-                voterAverageRatingBar
-                        .setRating(intentThatStartedThisActivity
-                                .getFloatExtra(Constants.VOTER_RATING_KEY, 0));
-            }
-
+        // set the views in this activity to display the data stored in movie object passed by the intent
+        if (selectedMovie.getThumbnailUrl() != null) {
+            // use Glide to get image from url and put it in image view
+            Glide.with(this)
+                    .load(selectedMovie.getThumbnailUrl())
+                    .apply(new RequestOptions()
+                            .format(DecodeFormat.PREFER_ARGB_8888)
+                            .override(Target.SIZE_ORIGINAL))
+                    .into(thumbnailIv);
+        }
+        if (selectedMovie.getTitle() != null) {
+            titleTv.setText(selectedMovie.getTitle());
+        }
+        if (selectedMovie.getDate() != null) {
+            releaseDateTv.setText(selectedMovie.getDate());
+        }
+        if (selectedMovie.getPlotSynopsis() != null) {
+            synopsisTv.setText(selectedMovie.getPlotSynopsis());
         }
 
-
+        // set vote average
+        voterAverageRatingBar.setRating(selectedMovie.getVoteAverage());
     }
+
 
     /**
      * This method will cause the app to navigate back to the Activity that started the Detail

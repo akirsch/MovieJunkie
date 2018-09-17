@@ -23,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.android.moviejunkie.utilities.MovieLoader;
+import com.example.android.moviejunkie.utilities.Utility;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -32,10 +33,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     /**
      * target url for a Movie DB API query
      */
-    private static final String BASE_URL = "https://api.themoviedb.org/3/discover/movie?";
+    private static final String BASE_URL = "https://api.themoviedb.org/3/movie";
 
     // initialize String constant to store value of private api key the the Movie DB Api
-    private static final String API_KEY = "";
+    private static final String API_KEY = "5f64b72ee2d1533149e6ab6aa25a35bb";
 
     private static final String LOG_TAG = MainActivity.class.getName();
 
@@ -75,8 +76,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // Attach the adapter to the RecyclerView to populate items
         recyclerView.setAdapter(movieAdapter);
 
+        // calculate number fo columns to display according to device screen size
+        int numberOfColumns = Utility.calculateNoOfColumns(this);
+
         // Set grid layout manager to position the items in a grid of two vertical columns
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
 
         // check there is a network connection
         ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -114,12 +118,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 getString(R.string.settings_order_by_key),
                 getString(R.string.settings_order_by_default));
 
+        String topRated = getResources().getString(R.string.settings_order_by_top_rated_value);
+        String popular = getResources().getString(R.string.settings_order_by_popularity_value);
+
+        Log.v(LOG_TAG, "top rated string is" + topRated);
+        Log.v(LOG_TAG, "popular string is" + popular);
+
+        Log.v(LOG_TAG, "query parameter is " + orderBy);
+
         Uri baseUri = Uri.parse(BASE_URL);
 
         // buildUpon prepares the baseUri that we just parsed so we can add query parameters to it
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
-        uriBuilder.appendQueryParameter("sort_by", orderBy);
+        uriBuilder.appendEncodedPath(orderBy);
         uriBuilder.appendQueryParameter("api_key", API_KEY);
 
         Log.v(LOG_TAG, uriBuilder.toString());

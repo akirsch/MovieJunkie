@@ -1,6 +1,8 @@
 package com.example.android.moviejunkie;
 
-public class Movie {
+import java.io.Serializable;
+
+public class Movie implements Serializable {
 
     private String title;
     private String date;
@@ -32,11 +34,11 @@ public class Movie {
         this.date = date;
     }
 
-    public String getTumbnailUrl() {
+    public String getThumbnailUrl() {
         return thumbnailUrl;
     }
 
-    public void setTumbnailUrl(String tumbnailUrl) {
+    public void setThumbnailUrl(String tumbnailUrl) {
         this.thumbnailUrl = tumbnailUrl;
     }
 

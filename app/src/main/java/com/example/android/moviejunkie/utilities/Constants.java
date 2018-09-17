@@ -1,13 +1,14 @@
 package com.example.android.moviejunkie.utilities;
 
+import java.io.Serializable;
+
 public class Constants {
 
     // constants for intent extra keys
-    public final static String TITLE_KEY = "TITLE";
-    public final static String RELEASE_DATE_KEY = "RELEASE_DATE";
-    public final static String POSTER_URL_KEY = "POSTER_URL";
-    public final static String VOTER_RATING_KEY = "VOTER_RATING";
-    public final static String SYNOPSIS_KEY = "SYNOPSIS";
+    public final static String MOVIE_OBJECT_KEY = "MOVIE_OBJECT";
+
+
+    public final static int GRID_IMAGE_WIDTH = 205;
 
 
 }

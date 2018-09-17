@@ -9,10 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.android.moviejunkie.utilities.Constants;
+
 import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
@@ -48,12 +50,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull MovieAdapter.ViewHolder holder, final int position) {
 
         // Get the data model based on position
-        final Movie currentMovie = mMovieList.get(position);
+        final Movie currentMovie = mMovieList.get(holder.getAdapterPosition());
 
         // Set item views based on your views and data model
         final ImageView thumbnailPosterIv = holder.moviePosterImageView;
 
-        posterUrl = currentMovie.getTumbnailUrl();
+        posterUrl = currentMovie.getThumbnailUrl();
 
         Log.v(LOG_TAG, posterUrl);
 
@@ -61,9 +63,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         Glide.with(mContext)
                 .load(posterUrl)
                 .apply(new RequestOptions()
-                        .centerCrop()
-                        .format(DecodeFormat.PREFER_ARGB_8888)
-                        .override(206, 206))
+                        .override(206, 206)
+                        .format(DecodeFormat.PREFER_ARGB_8888))
                 .into(thumbnailPosterIv);
 
         // create click listener which will open the Detail Activity showing more information
@@ -76,11 +77,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
                 // create implicit intent to open the Detail Activity
                 Intent intent = new Intent(context, DetailActivity.class);
                 // put extras in the intent containing the data stored in movie object user clicked on
-                intent.putExtra(Constants.TITLE_KEY, currentMovie.getTitle());
-                intent.putExtra(Constants.RELEASE_DATE_KEY, currentMovie.getDate());
-                intent.putExtra(Constants.VOTER_RATING_KEY, currentMovie.getVoteAverage());
-                intent.putExtra(Constants.POSTER_URL_KEY, currentMovie.getTumbnailUrl());
-                intent.putExtra(Constants.SYNOPSIS_KEY, currentMovie.getPlotSynopsis());
+                intent.putExtra(Constants.MOVIE_OBJECT_KEY, currentMovie);
 
                 if (intent.resolveActivity(context.getPackageManager()) != null) {
                     context.startActivity(intent);
