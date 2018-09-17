@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final String BASE_URL = "https://api.themoviedb.org/3/movie";
 
     // initialize String constant to store value of private api key the the Movie DB Api
-    private static final String API_KEY = "5f64b72ee2d1533149e6ab6aa25a35bb";
+    private static final String API_KEY = ".";
 
     private static final String LOG_TAG = MainActivity.class.getName();
 
