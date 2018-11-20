@@ -222,7 +222,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         // for a maximum of 3 times show views to launch trailers and set onClickListeners
         // only if the trailer exists, and show reviews if they exist
         if (!trailerKeys.isEmpty()) {
-            for (int i = 0; i < MAX_NUMBER ; i++) {
+            for (int i = 0; i < MAX_NUMBER; i++) {
                 if (trailerKeys.size() >= (i + 1)) {
                     trailerViewArray[i].setVisibility(View.VISIBLE);
                     trailerViewArray[i].setOnClickListener(this);
@@ -231,7 +231,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         }
 
         if (!movieReviews.isEmpty()) {
-            for (int i = 0; i < MAX_NUMBER ; i++) {
+            for (int i = 0; i < MAX_NUMBER; i++) {
                 if (movieReviews.size() >= (i + 1)) {
                     reviewViewsArray[i].setVisibility(View.VISIBLE);
                     reviewViewsArray[i].setText(getResources().getStringArray(R.array.review_header_array)[i]);
@@ -304,7 +304,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
         switch (view.getId()) {
             case R.id.favorite_icon:
-                //onFavoriteButtonClicked();
+                onFavoriteButtonClicked();
                 break;
             case R.id.trailer_oneTv:
                 if (trailerKeys.get(0) != null) {
@@ -333,7 +333,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                     startActivity(intent);
                 }
             case R.id.review_oneTv:
-                if (!reviewOneIsShowing){
+                if (!reviewOneIsShowing) {
                     String firstMovieReview = movieReviews.get(0);
                     review_oneTv.setText(firstMovieReview);
                     review_oneTv.setAllCaps(false);
@@ -345,7 +345,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 break;
             case R.id.review_twoTv:
-                if (!reviewTwoIsShowing){
+                if (!reviewTwoIsShowing) {
                     String secondMovieReview = movieReviews.get(1);
                     review_twoTv.setText(secondMovieReview);
                     review_twoTv.setAllCaps(false);
@@ -357,7 +357,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 break;
             case R.id.review_threeTv:
-                if (!reviewThreeIsShowing){
+                if (!reviewThreeIsShowing) {
                     String thirdMovieReview = movieReviews.get(2);
                     review_threeTv.setText(thirdMovieReview);
                     review_threeTv.setAllCaps(false);
@@ -371,30 +371,20 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    /*private void onFavoriteButtonClicked() {
+    private void onFavoriteButtonClicked() {
         if (!selectedMovie.isFavorite()) {
-        favoriteIv.setImageResource(R.drawable.ic_favorite);
-        selectedMovie.setFavorite(true);
-        // If movie was not previously listed a favorite,
-        // when favorites button is clicked add this movie to favorite movie database
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                mDb.favoriteMovieDao().insertMovie(selectedMovie);
-            }
-        });
+            favoriteIv.setImageResource(R.drawable.ic_favorite);
+            selectedMovie.setFavorite(true);
+            // If movie was not previously listed a favorite,
+            // when favorites button is clicked add this movie to favorite movie database
+            mDb.favoriteMovieDao().insertMovie(selectedMovie);
 
-    } else {
-        favoriteIv.setImageResource(R.drawable.ic_favorite_border);
-        selectedMovie.setFavorite(false);
-        // If movie was previously listed a favorite,
-        // when favorites button is clicked remove this movie from the favorite movie database
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                mDb.favoriteMovieDao().deleteMovie(selectedMovie);
-            }
-        });
+        } else {
+            favoriteIv.setImageResource(R.drawable.ic_favorite_border);
+            selectedMovie.setFavorite(false);
+            // If movie was previously listed a favorite,
+            // when favorites button is clicked remove this movie from the favorite movie database
+            mDb.favoriteMovieDao().deleteMovie(selectedMovie);
+        }
     }
-    }*/
 }
