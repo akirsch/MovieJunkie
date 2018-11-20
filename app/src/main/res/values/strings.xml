@@ -15,6 +15,8 @@
 
     <string name="synopsis_header">Synopsis</string>
 
+    <string name="reviews_header">Movie Reviews</string>
+
     <string name="rating_header">Voter Rating</string>
 
     <string name="settings_menu_item">Settings</string>
@@ -22,6 +24,19 @@
     <string name="settings_title">Movie Settings</string>
 
     <string name="thumbnail_description">Thumbnail of movie poster</string>
+
+    <string name="watch_trailer_one">Watch Trailer 1</string>
+
+    <string name="watch_trailer_two">Watch Trailer 2</string>
+
+    <string name="watch_trailer_three">Watch Trailer 3</string>
+
+    <string name="read_review_one">Read Review 1</string>
+
+    <string name="read_review_two">Read Review 2</string>
+
+    <string name="read_review_three">Read Review 3</string>
+
 
     <!-- Strings For Order-By Preference [CHAR LIMIT=30] -->
     <string name="settings_order_by_label">Order by </string>

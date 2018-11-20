@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.moviejunkie.utilities.Constants;
 import com.example.android.moviejunkie.utilities.MovieLoader;
 import com.example.android.moviejunkie.utilities.Utility;
 
@@ -33,10 +34,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     /**
      * target url for a Movie DB API query
      */
-    private static final String BASE_URL = "https://api.themoviedb.org/3/movie";
 
-    // initialize String constant to store value of private api key the the Movie DB Api
-    private static final String API_KEY = ".";
+
 
     private static final String LOG_TAG = MainActivity.class.getName();
 
@@ -126,13 +125,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         Log.v(LOG_TAG, "query parameter is " + orderBy);
 
-        Uri baseUri = Uri.parse(BASE_URL);
+        Uri baseUri = Uri.parse(Constants.BASE_URL);
 
         // buildUpon prepares the baseUri that we just parsed so we can add query parameters to it
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
         uriBuilder.appendEncodedPath(orderBy);
-        uriBuilder.appendQueryParameter("api_key", API_KEY);
+        uriBuilder.appendQueryParameter("api_key", Constants.API_KEY);
 
         Log.v(LOG_TAG, uriBuilder.toString());
 

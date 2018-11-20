@@ -21,7 +21,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
-class NetworkUtils {
+public class NetworkUtils {
 
     /**
      * Tag for the log messages
@@ -32,9 +32,12 @@ class NetworkUtils {
     private final static String RESPONSE_ARRAY = "results";
     private final static String TITLE_STRING = "title";
     private final static String RELEASE_DATE_STRING = "release_date";
+    private final static String TRAILER_KEY_STRING = "key";
+    private final static String REVIEW_CONTENT_STRING = "content";
     private final static String POSTER_PATH_STRING = "poster_path";
     private final static String VOTER_AVERAGE_STRING = "vote_average";
     private final static String SYNOPSIS_STRING = "overview";
+    private final static String ID_STRING = "id";
 
     private final static String GET_REQUEST = "GET";
 
@@ -65,6 +68,25 @@ class NetworkUtils {
         // Return the ArrayList of movie items
         return extractMovies(jsonResponse);
 
+    }
+
+    public static Movie fetchMovieTrailersAndReviews(String trailerRequestUrl, String reviewsRequestUrl){
+        Log.v(NetworkUtils.class.getName(), "fetchMovieTrailersAndReviews called");
+
+        URL trailerUrl = createUrl(trailerRequestUrl);
+        URL reviewUrl = createUrl(reviewsRequestUrl);
+
+        // Perform HTTP request to the URL and receive a JSON response back
+        String trailersJsonResponse = null;
+        String reviewsJsonResponse = null;
+        try {
+            trailersJsonResponse = makeHttpRequest(trailerUrl);
+            reviewsJsonResponse = makeHttpRequest(reviewUrl);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error closing input stream", e);
+        }
+
+        return extractMovieTrailerKeysAndReviews(trailersJsonResponse, reviewsJsonResponse);
     }
 
     /**
@@ -100,6 +122,8 @@ class NetworkUtils {
                 JSONObject currentMovieJSONObject = jsonResponseArray.optJSONObject(i);
 
                 // get data for this movie in order that they are passed into Movie constructor
+
+                String movieId = currentMovieJSONObject.optString(ID_STRING);
                 String title = currentMovieJSONObject.optString(TITLE_STRING);
                 String releaseDate = currentMovieJSONObject.optString(RELEASE_DATE_STRING);
                 String thumbnailFilePath = currentMovieJSONObject.optString(POSTER_PATH_STRING);
@@ -117,7 +141,7 @@ class NetworkUtils {
 
                 // create new Movie Item object with these values as parameters and pass it into
                 // the MovieListItems array
-                movieListItems.add(new Movie(title, releaseDate, thumbnailUrl, voteAverage, synopsis));
+                movieListItems.add(new Movie(movieId, title, releaseDate, thumbnailUrl, voteAverage, synopsis));
                 Log.v(LOG_TAG, movieListItems.get(i).getTitle());
             }
 
@@ -134,10 +158,69 @@ class NetworkUtils {
         return null;
     }
 
+    private static Movie extractMovieTrailerKeysAndReviews(String trailerJsonResponse, String reviewJsonResponse) {
+        Log.v(LOG_TAG, "extractMovieTrailers called");
+
+        // If either of the JSON strings are empty or null, then return early.
+        if (TextUtils.isEmpty(trailerJsonResponse) || TextUtils.isEmpty(reviewJsonResponse)) {
+            return null;
+        }
+
+        // Create empty ArrayLists that we can start adding trailer keys and reviews to
+        ArrayList<String> movieTrailerKeys = new ArrayList<>();
+
+        ArrayList<String> moviewReviews = new ArrayList<>();
+
+        try {
+            // get root JSONObject for trailer data
+            JSONObject trailerDataJsonRootObject = new JSONObject(trailerJsonResponse);
+
+            // get array with key value "response" which contains array with movie trailer data.
+            JSONArray trailerDataJsonResponseArray = trailerDataJsonRootObject.optJSONArray(RESPONSE_ARRAY);
+
+            //Iterate the jsonArray and get the key value of each movie trailer and store in ArrayList
+            for (int i = 0; i < trailerDataJsonResponseArray.length(); i++) {
+                // get current object in results Array
+                JSONObject currentTrailerJSONObject = trailerDataJsonResponseArray.optJSONObject(i);
+                String movieTrailerKey = currentTrailerJSONObject.optString(TRAILER_KEY_STRING);
+
+                movieTrailerKeys.add(movieTrailerKey);
+
+            }
+
+            // get root JSONObject for reviews data
+            JSONObject reviewsDataJsonRootObject = new JSONObject(reviewJsonResponse);
+
+            // get array with key value "response" which contains array with movie review data.
+            JSONArray reviewDataJsonResponseArray = reviewsDataJsonRootObject.optJSONArray(RESPONSE_ARRAY);
+
+            //Iterate the jsonArray and get the content of each movie review and store in ArrayList
+            for (int i = 0; i < reviewDataJsonResponseArray.length(); i++) {
+                // get current object in results Array
+                JSONObject currentReviewJSONObject = reviewDataJsonResponseArray.optJSONObject(i);
+                String movieReview = currentReviewJSONObject.optString(REVIEW_CONTENT_STRING);
+
+                moviewReviews.add(movieReview);
+
+            }
+
+            return new Movie(movieTrailerKeys, moviewReviews);
+
+        } catch (JSONException e) {
+            // If an error is thrown when executing any of the above statements in the "try" block,
+            // catch the exception here, so the app doesn't crash. Print a log message
+            // with the message from the exception.
+            Log.e("NetworkUtils", "Problem parsing the movie JSON results", e);
+        }
+
+        return null;
+
+    }
+
     /**
      * Returns new URL object from the given string URL.
      */
-    private static URL createUrl(String stringUrl) {
+    public static URL createUrl(String stringUrl) {
         URL url = null;
         try {
             url = new URL(stringUrl);

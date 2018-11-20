@@ -16,5 +16,9 @@
 
     <dimen name="dp_6">6dp</dimen>
 
+    <dimen name="corner_radius">2dp</dimen>
+
+    <dimen name="movie_thumbnail_dimen">205dp</dimen>
+
 
 </resources>

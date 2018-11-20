@@ -1,21 +1,59 @@
 package com.example.android.moviejunkie;
 
-import java.io.Serializable;
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+
+@Entity(tableName = "favorite_movies")
 public class Movie implements Serializable {
 
+
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    private String movieId;
     private String title;
     private String date;
+    @ColumnInfo(name = "thumbnail_url")
     private String thumbnailUrl;
+    @ColumnInfo(name = "vote_average")
     private float voteAverage;
+    @ColumnInfo(name = "plot_synopsis")
     private String plotSynopsis;
+    @ColumnInfo(name = "is_favorite")
+    private boolean isFavorite;
+    @ColumnInfo(name = "movie_trailer_keys")
+    private ArrayList<String> movieTrailerKeys;
+    @ColumnInfo(name = "movie_reviews")
+    private ArrayList<String> movieReviews;
 
-    public Movie (String title, String date, String tumbnailUrl, float voteAverage, String plotSynopsis) {
+
+    public Movie (String id, String title, String date, String thumbnailUrl, float voteAverage, String plotSynopsis) {
+        this.movieId = id;
         this.title = title;
         this.date = date;
-        this.thumbnailUrl = tumbnailUrl;
+        this.thumbnailUrl = thumbnailUrl;
         this.voteAverage = voteAverage;
         this.plotSynopsis = plotSynopsis;
+        // for each new Movie object that is created, set default isFavorite value to false
+        this.isFavorite = false;
+    }
+
+    @Ignore
+    public Movie (ArrayList<String> trailerKeys, ArrayList<String> reviews){
+        movieTrailerKeys = trailerKeys;
+        movieReviews = reviews;
+    }
+
+    public String getMovieId() {
+        return movieId;
+    }
+
+    public void setMovieId(String movieId) {
+        this.movieId = movieId;
     }
 
     public String getTitle() {
@@ -56,5 +94,30 @@ public class Movie implements Serializable {
 
     public void setPlotSynopsis(String plotSynopsis) {
         this.plotSynopsis = plotSynopsis;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
+    public ArrayList<String> getMovieReviews() {
+        return movieReviews;
+    }
+
+    public void setMovieReviews(ArrayList<String> movieReviews) {
+        this.movieReviews = movieReviews;
+    }
+
+
+    public ArrayList<String> getMovieTrailerKeys() {
+        return movieTrailerKeys;
+    }
+
+    public void setMovieTrailerKeys(ArrayList<String> movieTrailerKeys) {
+        this.movieTrailerKeys = movieTrailerKeys;
     }
 }

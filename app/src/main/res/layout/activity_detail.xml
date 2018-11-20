@@ -48,83 +48,233 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
-            <LinearLayout
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/movieDetailsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/title_tv"
+                style="@style/StandardTextView"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:textAllCaps="true"
+                android:textSize="@dimen/movie_name_text_size"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Tomorrow Never Dies" />
+
+            <TextView
+                android:id="@+id/release_date_header_tv"
+                style="@style/StandardTextView"
+                android:layout_marginTop="8dp"
+                android:drawableStart="@drawable/ic_date_range"
+                android:drawablePadding="@dimen/dp_6"
+                android:drawableTint="@color/colorPrimary"
+                android:text="@string/release_date"
+                android:textSize="@dimen/title_text_size"
+                app:layout_constraintStart_toStartOf="@+id/title_tv"
+                app:layout_constraintTop_toBottomOf="@+id/title_tv" />
+
+            <TextView
+                android:id="@+id/release_date_tv"
+                style="@style/StandardTextView"
+                android:layout_marginTop="8dp"
+                android:textSize="@dimen/standard_text_size"
+                app:layout_constraintStart_toStartOf="@+id/release_date_header_tv"
+                app:layout_constraintTop_toBottomOf="@+id/release_date_header_tv"
+                tools:text="01/09/2018" />
+
+            <TextView
+                android:id="@+id/rating_header_tv"
+                style="@style/StandardTextView"
+                android:layout_marginTop="8dp"
+                android:drawableStart="@drawable/ic_thumbs_up_down"
+                android:drawablePadding="@dimen/dp_6"
+                android:drawableTint="@color/colorPrimary"
+                android:text="@string/rating_header"
+                android:textSize="@dimen/title_text_size"
+                app:layout_constraintStart_toStartOf="@+id/release_date_tv"
+                app:layout_constraintTop_toBottomOf="@+id/release_date_tv" />
+
+            <RatingBar
+                android:id="@+id/voter_rating_bar"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:numStars="10"
+                android:stepSize="0.1"
+                app:layout_constraintStart_toStartOf="@+id/rating_header_tv"
+                app:layout_constraintTop_toBottomOf="@+id/rating_header_tv"
+                tools:rating="4.5" />
+
+
+            <TextView
+                android:id="@+id/synopsis_headerTv"
+                style="@style/StandardTextView"
+                android:layout_marginTop="16dp"
+                android:drawableStart="@drawable/ic_movie"
+                android:drawablePadding="@dimen/dp_6"
+                android:drawableTint="@color/colorPrimary"
+                android:text="@string/synopsis_header"
+                android:textAllCaps="true"
+                android:textSize="@dimen/standard_text_size"
+                app:layout_constraintStart_toStartOf="@+id/voter_rating_bar"
+                app:layout_constraintTop_toBottomOf="@+id/voter_rating_bar" />
+
+            <TextView
+                android:id="@+id/synopsis_tv"
+                style="@style/StandardTextView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/view_margin_16"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/title_tv"
-                    style="@style/StandardTextView"
-                    android:textAllCaps="true"
-                    android:textSize="@dimen/movie_name_text_size"
-                    android:textStyle="bold"
-                    tools:text="Tomorrow Never Dies" />
-
-                <TextView
-                    android:id="@+id/release_date_header_tv"
-                    style="@style/StandardTextView"
-                    android:layout_marginBottom="6dp"
-                    android:drawablePadding="@dimen/dp_6"
-                    android:drawableStart="@drawable/ic_date_range"
-                    android:drawableTint="@color/colorPrimary"
-                    android:text="@string/release_date"
-                    android:textSize="@dimen/title_text_size" />
-
-                <TextView
-                    android:id="@+id/release_date_tv"
-                    style="@style/StandardTextView"
-                    android:textSize="@dimen/standard_text_size"
-                    tools:text="01/09/2018" />
-
-                <TextView
-                    android:id="@+id/rating_header_tv"
-                    style="@style/StandardTextView"
-                    android:layout_marginBottom="6dp"
-                    android:drawablePadding="@dimen/dp_6"
-                    android:drawableStart="@drawable/ic_thumbs_up_down"
-                    android:drawableTint="@color/colorPrimary"
-                    android:text="@string/rating_header"
-                    android:textSize="@dimen/title_text_size" />
-
-                <RatingBar
-                    android:id="@+id/voter_rating_bar"
-                    style="?android:attr/ratingBarStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/view_margin_16"
-                    android:numStars="10"
-                    android:stepSize="0.1"
-                    tools:rating="4.5" />
-
-
-                <TextView
-                    android:id="@+id/synopsis_headerTv"
-                    style="@style/StandardTextView"
-                    android:layout_marginBottom="@dimen/dp_8"
-                    android:layout_marginTop="@dimen/dp_8"
-                    android:drawablePadding="@dimen/dp_6"
-                    android:drawableStart="@drawable/ic_movie"
-                    android:drawableTint="@color/colorPrimary"
-                    android:text="@string/synopsis_header"
-                    android:textAllCaps="true"
-                    android:textSize="@dimen/standard_text_size" />
-
-                <TextView
-                    android:id="@+id/synopsis_tv"
-                    style="@style/StandardTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/detail_margin_bottom"
-                    android:textSize="@dimen/standard_text_size"
-                    tools:text=" blah blah blah blah blah blah blah blah blah v blah blah blah blah /n
+                android:layout_height="78dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:textSize="@dimen/standard_text_size"
+                app:layout_constraintBottom_toTopOf="@+id/trailer_oneTv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/synopsis_headerTv"
+                tools:text=" blah blah blah blah blah blah blah blah blah v blah blah blah blah /n
                     blahblahblahblahblahblahblahblahblahblahblahblahblah" />
 
-            </LinearLayout>
+            <ImageView
+                android:id="@+id/favorite_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="32dp"
+                android:tint="@color/colorAccent"
+                app:layout_constraintBottom_toTopOf="@+id/title_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/title_tv"
+                app:layout_constraintTop_toBottomOf="@+id/title_tv"
+                tools:src="@drawable/ic_favorite_border" />
+
+            <TextView
+                android:id="@+id/trailer_oneTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:drawableStart="@drawable/ic_action_playback_play"
+                android:drawablePadding="@dimen/dp_8"
+                android:drawableTint="@color/colorPrimary"
+                android:gravity="center"
+                android:text="@string/watch_trailer_one"
+                android:textAllCaps="true"
+                android:textColor="@color/textColor"
+                android:textSize="@dimen/standard_text_size"
+                app:layout_constraintStart_toStartOf="@+id/synopsis_tv"
+                app:layout_constraintTop_toBottomOf="@+id/synopsis_tv" />
+
+            <TextView
+                android:id="@+id/trailer_twoTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:drawableStart="@drawable/ic_action_playback_play"
+                android:drawablePadding="@dimen/dp_8"
+                android:drawableTint="@color/colorPrimary"
+                android:gravity="center"
+                android:text="@string/watch_trailer_two"
+                android:textAllCaps="true"
+                android:textColor="@color/textColor"
+                android:textSize="@dimen/standard_text_size"
+                app:layout_constraintStart_toStartOf="@+id/trailer_oneTv"
+                app:layout_constraintTop_toBottomOf="@+id/trailer_oneTv" />
+
+            <TextView
+                android:id="@+id/trailer_threeTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:drawableStart="@drawable/ic_action_playback_play"
+                android:drawablePadding="@dimen/dp_8"
+                android:drawableTint="@color/colorPrimary"
+                android:gravity="center"
+                android:text="@string/watch_trailer_three"
+                android:textAllCaps="true"
+                android:textColor="@color/textColor"
+                android:textSize="@dimen/standard_text_size"
+                app:layout_constraintStart_toStartOf="@+id/trailer_twoTv"
+                app:layout_constraintTop_toBottomOf="@+id/trailer_twoTv" />
+
+
+            <TextView
+                android:id="@+id/review_oneTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:ellipsize="marquee"
+                android:fontFamily="@font/roboto"
+                android:gravity="start"
+                android:text="@string/read_review_one"
+                android:textAlignment="viewStart"
+                android:textAllCaps="true"
+                android:textColor="@color/textColor"
+                android:textSize="@dimen/standard_text_size"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/trailer_threeTv"
+                app:layout_constraintTop_toBottomOf="@+id/trailer_threeTv" />
+
+            <TextView
+                android:id="@+id/review_twoTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="16dp"
+                android:ellipsize="marquee"
+                android:fontFamily="@font/roboto"
+                android:gravity="start"
+                android:text="@string/read_review_two"
+                android:textAlignment="viewStart"
+                android:textAllCaps="true"
+                android:textColor="@color/textColor"
+                android:textSize="@dimen/standard_text_size"
+                app:layout_constraintEnd_toStartOf="@+id/guideline"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/review_oneTv"
+                app:layout_constraintTop_toBottomOf="@+id/review_oneTv" />
+
+            <TextView
+                android:id="@+id/review_threeTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:ellipsize="marquee"
+                android:fontFamily="@font/roboto"
+                android:gravity="start"
+                android:text="@string/read_review_three"
+                android:textAlignment="viewStart"
+                android:textAllCaps="true"
+                android:textColor="@color/textColor"
+                android:textSize="@dimen/standard_text_size"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/review_twoTv"
+                app:layout_constraintTop_toBottomOf="@+id/review_twoTv" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="395dp" />
+        </android.support.constraint.ConstraintLayout>
 
     </android.support.v4.widget.NestedScrollView>
 
