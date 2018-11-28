@@ -23,6 +23,8 @@
 
     <string name="settings_title">Movie Settings</string>
 
+    <string name="favorites_icon">Favorites</string>
+
     <string name="thumbnail_description">Thumbnail of movie poster</string>
 
     <string name="watch_trailer_one">Watch Trailer 1</string>
@@ -50,4 +52,8 @@
     <!-- Label for order by top rated[CHAR LIMIT=20] -->
     <string name="settings_order_by_top_rated_label">Top Rated</string>
     <string name="settings_order_by_top_rated_value" translatable="false">top_rated</string>
+
+    <!-- Label for order by favorites [CHAR LIMIT=20] -->
+    <string name="settings_order_by_favorites_label">Favorites</string>
+    <string name="settings_order_by_favorites_value" translatable="false">favorites</string>
 </resources>

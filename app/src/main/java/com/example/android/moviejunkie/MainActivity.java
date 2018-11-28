@@ -1,6 +1,9 @@
 package com.example.android.moviejunkie;
 
 import android.app.LoaderManager;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.arch.persistence.room.Database;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
@@ -10,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -22,11 +26,13 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.moviejunkie.database.MovieDatabase;
 import com.example.android.moviejunkie.utilities.Constants;
 import com.example.android.moviejunkie.utilities.MovieLoader;
 import com.example.android.moviejunkie.utilities.Utility;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Movie>> {
@@ -34,8 +40,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     /**
      * target url for a Movie DB API query
      */
-
-
 
     private static final String LOG_TAG = MainActivity.class.getName();
 
@@ -45,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private TextView emptyTextView;
     private ArrayList<Movie> movieItems;
     private MovieAdapter movieAdapter;
+    private Bundle preferenceStringBundle;
+    private MovieDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +73,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         progressBar = findViewById(R.id.loading_spinner);
         emptyTextView = findViewById(R.id.empty_list_view);
 
+        // calculate number fo columns to display according to device screen size
+        int numberOfColumns = Utility.calculateNoOfColumns(this);
+
+        // Set grid layout manager to position the items in a grid of two vertical columns
+        recyclerView.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
+
         movieItems = new ArrayList<>();
         // Create adapter passing in this ArrayList as the data source
 
@@ -75,33 +87,52 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // Attach the adapter to the RecyclerView to populate items
         recyclerView.setAdapter(movieAdapter);
 
-        // calculate number fo columns to display according to device screen size
-        int numberOfColumns = Utility.calculateNoOfColumns(this);
+        // Initialize database
+        mDb = MovieDatabase.getInstance(getApplicationContext());
 
-        // Set grid layout manager to position the items in a grid of two vertical columns
-        recyclerView.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
+        // determine which preference option is currently selected
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        // check there is a network connection
-        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        String chosenPreference = sharedPrefs.getString(
+                getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default));
 
-        NetworkInfo activeNetwork = Objects.requireNonNull(cm).getActiveNetworkInfo();
+        if (chosenPreference.equals(getResources().getString(R.string.settings_order_by_top_rated_value))
+                || chosenPreference.equals(getResources().getString(R.string.settings_order_by_popularity_value))) {
 
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
+            preferenceStringBundle = new Bundle();
+            preferenceStringBundle.putString(Constants.PREFERENCE_STRING_KEY, chosenPreference);
 
-        if (isConnected) {
-            // If there is a network connection,
-            // create new instance of load manager and instantiate new Loader object , or renew existing one.
-            getLoaderManager().initLoader(0, null, this);
-            Log.v(LOG_TAG, "load manager initialized");
-        } else {
-            // if no connection, display message explaining the issue to users
+
+            // check there is a network connection
+            ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            NetworkInfo activeNetwork = Objects.requireNonNull(cm).getActiveNetworkInfo();
+
+            boolean isConnected = activeNetwork != null &&
+                    activeNetwork.isConnectedOrConnecting();
+
+            if (isConnected) {
+                // If there is a network connection,
+                // create new instance of load manager and instantiate new Loader object , or renew existing one.
+                getLoaderManager().initLoader(0, preferenceStringBundle, this);
+                Log.v(LOG_TAG, "load manager initialized");
+            } else {
+                // if no connection, display message explaining the issue to users
+                progressBar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
+                emptyTextView.setText(R.string.user_offline);
+                Drawable img = getDrawable(R.drawable.ic_signal_wifi_off);
+                emptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, img);
+            }
+
+        // if current chosen preference is favorite movies, display movies in recycler view even when offline
+        } else if (chosenPreference.equals(getResources().getString(R.string.settings_order_by_favorites_value))) {
             progressBar.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.GONE);
-            emptyTextView.setText(R.string.user_offline);
-            Drawable img = getDrawable(R.drawable.ic_signal_wifi_off);
-            emptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, img);
+            setupViewModel();
+
         }
+
 
 
     }
@@ -111,19 +142,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         Log.v(LOG_TAG, "onCreateLoader called");
 
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        String orderBy = sharedPrefs.getString(
-                getString(R.string.settings_order_by_key),
-                getString(R.string.settings_order_by_default));
-
-        String topRated = getResources().getString(R.string.settings_order_by_top_rated_value);
-        String popular = getResources().getString(R.string.settings_order_by_popularity_value);
-
-        Log.v(LOG_TAG, "top rated string is" + topRated);
-        Log.v(LOG_TAG, "popular string is" + popular);
-
-        Log.v(LOG_TAG, "query parameter is " + orderBy);
+        String orderBy = bundle.getString(Constants.PREFERENCE_STRING_KEY);
 
         Uri baseUri = Uri.parse(Constants.BASE_URL);
 
@@ -189,5 +208,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setupViewModel() {
+        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        viewModel.getFavoriteMovies().observe(this, new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(@Nullable List<Movie> favoriteMovies) {
+                movieAdapter.setMovies(favoriteMovies);
+            }
+        });
     }
 }

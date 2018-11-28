@@ -21,6 +21,8 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+import static android.text.Html.fromHtml;
+
 public class NetworkUtils {
 
     /**
@@ -134,7 +136,7 @@ public class NetworkUtils {
                 String thumbnailUrl = createThumbnailUrl(thumbnailFilePath);
 
                 // remove html tags from this string
-                String synopsis = Html.fromHtml(synopsisHTML).toString();
+                String synopsis = Html.fromHtml(synopsisHTML, Html.FROM_HTML_MODE_LEGACY).toString();
 
                 // convert voter average String from Json response into Float to store in movie object
                 float voteAverage = Float.parseFloat(voteAverageAsString);

@@ -1,17 +1,22 @@
 package com.example.android.moviejunkie;
 
 import android.app.LoaderManager;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.content.Loader;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -48,7 +53,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private TextView playTrailerThreeTv;
     private RatingBar voterAverageRatingBar;
     private TextView synopsisTv;
-    private ImageView favoriteIv;
     private Bundle movieDataBundle;
     private ArrayList<String> trailerKeys;
     private ArrayList<String> movieReviews;
@@ -71,7 +75,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         releaseDateTv = findViewById(R.id.release_date_tv);
         voterAverageRatingBar = findViewById(R.id.voter_rating_bar);
         synopsisTv = findViewById(R.id.synopsis_tv);
-        favoriteIv = findViewById(R.id.favorite_icon);
         playTrailerOneTv = findViewById(R.id.trailer_oneTv);
         playTrailerTwoTv = findViewById(R.id.trailer_twoTv);
         playTrailerThreeTv = findViewById(R.id.trailer_threeTv);
@@ -102,7 +105,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
         getLoaderManager().initLoader(0, movieDataBundle, this);
 
-        setUpUI(selectedMovie);
+        setUpUI();
 
         // only show title off movie in app bar when collapsed
         final CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar);
@@ -150,8 +153,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         // set vote average
         voterAverageRatingBar.setRating(selectedMovie.getVoteAverage());
 
-        // set up onClickListener for the favorites button
-        favoriteIv.setOnClickListener(this);
 
     }
 
@@ -176,7 +177,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
         // build correct Uri to get the trailers for this movie
-        uriBuilder.appendEncodedPath(currentMovie.getMovieId());
+        uriBuilder.appendEncodedPath(currentMovie.getMovieApiId());
 
         uriBuilder.appendEncodedPath("videos");
 
@@ -193,7 +194,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
         // build correct Uri to get the trailers for this movie
-        uriBuilder.appendEncodedPath(currentMovie.getMovieId());
+        uriBuilder.appendEncodedPath(currentMovie.getMovieApiId());
 
         uriBuilder.appendEncodedPath("reviews");
 
@@ -246,6 +247,40 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         movieWithTrailerAndReviewData = null;
     }
 
+    @Override
+    // This method initializes the contents of the Activity's options menu.
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the Options Menu specified in XML
+        getMenuInflater().inflate(R.menu.detail_activity_menu, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem favoritesIcon = menu.getItem(0);
+
+        LiveData<Movie> movie = mDb.favoriteMovieDao().loadMovieById(selectedMovie.getMovieApiId());
+
+
+
+        if (movie == null) {
+            Drawable notSelectedAsFavoriteIcon = getDrawable(R.drawable.ic_favorite_border);
+            assert notSelectedAsFavoriteIcon != null;
+            notSelectedAsFavoriteIcon.setTint(getColor(R.color.colorAccent));
+            favoritesIcon.setIcon(notSelectedAsFavoriteIcon);
+        } else {
+            Drawable selectedAsFavoriteIcon = getDrawable(R.drawable.ic_favorite);
+            assert selectedAsFavoriteIcon != null;
+            selectedAsFavoriteIcon.setTint(getColor(R.color.colorAccent));
+            favoritesIcon.setIcon(selectedAsFavoriteIcon);
+        }
+        return true;
+
+    }
+
 
     /**
      * This method will cause the app to navigate back to the Activity that started the Detail
@@ -260,11 +295,16 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             case android.R.id.home:
                 finish();
                 return true;
+            case R.id.favorites:
+                onFavoriteButtonClicked(item);
+                break;
+
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void setUpUI(Movie selectedMovie) {
+
+    public void setUpUI() {
         // Enable up navigation to parent Activity
         // find Toolbar view in layout
         Toolbar myToolbar = findViewById(R.id.toolbar);
@@ -283,11 +323,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         review_twoTv.setVisibility(View.GONE);
         review_threeTv.setVisibility(View.GONE);
 
-        if (!selectedMovie.isFavorite()) {
-            favoriteIv.setImageResource(R.drawable.ic_favorite_border);
-        } else {
-            favoriteIv.setImageResource(R.drawable.ic_favorite);
-        }
+
 
     }
 
@@ -303,9 +339,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View view) {
 
         switch (view.getId()) {
-            case R.id.favorite_icon:
-                onFavoriteButtonClicked();
-                break;
             case R.id.trailer_oneTv:
                 if (trailerKeys.get(0) != null) {
                     String firstTrailerKey = trailerKeys.get(0);
@@ -371,20 +404,37 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private void onFavoriteButtonClicked() {
-        if (!selectedMovie.isFavorite()) {
-            favoriteIv.setImageResource(R.drawable.ic_favorite);
+    private void onFavoriteButtonClicked(MenuItem item) {
+
+        LiveData<Movie> movie = mDb.favoriteMovieDao().loadMovieById(selectedMovie.getMovieApiId());
+
+        if (movie == null) {
+            Drawable selectedAsFavoriteIcon = getDrawable(R.drawable.ic_favorite);
+            selectedAsFavoriteIcon.setTint(getColor(R.color.colorAccent));
+            item.setIcon(selectedAsFavoriteIcon);
             selectedMovie.setFavorite(true);
             // If movie was not previously listed a favorite,
             // when favorites button is clicked add this movie to favorite movie database
-            mDb.favoriteMovieDao().insertMovie(selectedMovie);
-
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    mDb.favoriteMovieDao().insertMovie(selectedMovie);
+                }
+            });
         } else {
-            favoriteIv.setImageResource(R.drawable.ic_favorite_border);
+            Drawable notSelectedAsFavoriteIcon = getDrawable(R.drawable.ic_favorite_border);
+            notSelectedAsFavoriteIcon.setTint(getColor(R.color.colorAccent));
+            item.setIcon(notSelectedAsFavoriteIcon);
             selectedMovie.setFavorite(false);
             // If movie was previously listed a favorite,
             // when favorites button is clicked remove this movie from the favorite movie database
-            mDb.favoriteMovieDao().deleteMovie(selectedMovie);
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    mDb.favoriteMovieDao().deleteMovie(selectedMovie);
+                }
+            });
+
         }
     }
 }

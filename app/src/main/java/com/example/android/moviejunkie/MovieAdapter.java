@@ -22,7 +22,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     private static final String LOG_TAG = MovieAdapter.class.getName();
 
     // Store a member variable for the News Items Array
-    final private List<Movie> mMovieList;
+    private List<Movie> mMovieList;
     final private Context mContext;
     private String posterUrl;
 
@@ -31,6 +31,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     MovieAdapter(Context context, List<Movie> movies) {
         mMovieList = movies;
         mContext = context;
+    }
+
+
+    /**
+     * When data changes, this method updates the list of movies
+     * and notifies the adapter to use the new values on it
+     */
+    public void setMovies(List<Movie> movies) {
+        mMovieList = movies;
+        notifyDataSetChanged();
     }
 
     @NonNull

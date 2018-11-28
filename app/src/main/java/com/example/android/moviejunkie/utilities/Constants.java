@@ -9,6 +9,7 @@ public class Constants {
 
     // constants for intent extra keys
     public final static String MOVIE_OBJECT_KEY = "MOVIE_OBJECT";
+    public final static String PREFERENCE_STRING_KEY = "PREFERENCE STRING";
 
     public final static String BASE_URL = "https://api.themoviedb.org/3/movie";
 
