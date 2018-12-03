@@ -27,5 +27,5 @@ public interface FavoriteMovieDao {
     void deleteMovie(Movie movie);
 
     @Query("SELECT * FROM favorite_movies WHERE movieApiId = :movieApiId")
-    LiveData<Movie> loadMovieById(String movieApiId);
+    Movie loadMovieById(String movieApiId);
 }

@@ -21,9 +21,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
-import static android.text.Html.fromHtml;
-
-public class NetworkUtils {
+class NetworkUtils {
 
     /**
      * Tag for the log messages
@@ -171,7 +169,7 @@ public class NetworkUtils {
         // Create empty ArrayLists that we can start adding trailer keys and reviews to
         ArrayList<String> movieTrailerKeys = new ArrayList<>();
 
-        ArrayList<String> moviewReviews = new ArrayList<>();
+        ArrayList<String> movieReviews = new ArrayList<>();
 
         try {
             // get root JSONObject for trailer data
@@ -202,11 +200,11 @@ public class NetworkUtils {
                 JSONObject currentReviewJSONObject = reviewDataJsonResponseArray.optJSONObject(i);
                 String movieReview = currentReviewJSONObject.optString(REVIEW_CONTENT_STRING);
 
-                moviewReviews.add(movieReview);
+                movieReviews.add(movieReview);
 
             }
 
-            return new Movie(movieTrailerKeys, moviewReviews);
+            return new Movie(movieTrailerKeys, movieReviews);
 
         } catch (JSONException e) {
             // If an error is thrown when executing any of the above statements in the "try" block,
@@ -222,7 +220,7 @@ public class NetworkUtils {
     /**
      * Returns new URL object from the given string URL.
      */
-    public static URL createUrl(String stringUrl) {
+    private static URL createUrl(String stringUrl) {
         URL url = null;
         try {
             url = new URL(stringUrl);

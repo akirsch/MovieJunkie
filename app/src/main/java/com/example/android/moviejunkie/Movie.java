@@ -12,7 +12,6 @@ import java.util.ArrayList;
 @Entity(tableName = "favorite_movies")
 public class Movie implements Serializable {
 
-    @NonNull
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "database_id")
     private int movieDbID;
@@ -72,10 +71,6 @@ public class Movie implements Serializable {
         return movieApiId;
     }
 
-    public void setMovieApiId(String movieId) {
-        this.movieApiId = movieId;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -88,32 +83,17 @@ public class Movie implements Serializable {
         return date;
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
-
     public String getThumbnailUrl() {
         return thumbnailUrl;
     }
 
-    public void setThumbnailUrl(String tumbnailUrl) {
-        this.thumbnailUrl = tumbnailUrl;
-    }
 
     public float getVoteAverage() {
         return voteAverage;
     }
 
-    public void setVoteAverage(float voteAverage) {
-        this.voteAverage = voteAverage;
-    }
-
     public String getPlotSynopsis() {
         return plotSynopsis;
-    }
-
-    public void setPlotSynopsis(String plotSynopsis) {
-        this.plotSynopsis = plotSynopsis;
     }
 
     public boolean isFavorite() {
@@ -131,7 +111,6 @@ public class Movie implements Serializable {
     public void setMovieReviews(ArrayList<String> movieReviews) {
         this.movieReviews = movieReviews;
     }
-
 
     public ArrayList<String> getMovieTrailerKeys() {
         return movieTrailerKeys;

@@ -9,9 +9,9 @@ import com.example.android.moviejunkie.database.MovieDatabase;
 
 import java.util.List;
 
-public class MainViewModel extends AndroidViewModel {
+class MainViewModel extends AndroidViewModel {
 
-    private LiveData<List<Movie>> favoriteMovies;
+    private final LiveData<List<Movie>> favoriteMovies;
 
     public MainViewModel(@NonNull Application application) {
         super(application);

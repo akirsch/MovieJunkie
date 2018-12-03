@@ -1,7 +1,5 @@
 package com.example.android.moviejunkie.utilities;
 
-import java.io.Serializable;
-
 public class Constants {
 
     // initialize String constant to store value of private api key the the Movie DB Api
@@ -16,5 +14,9 @@ public class Constants {
 
     public final static int GRID_IMAGE_WIDTH = 205;
 
+    public final static String CURRENT_REVIEW_1_TEXT = "REVIEW 1 TEXT";
 
+    public final static String CURRENT_REVIEW_2_TEXT = "REVIEW 2 TEXT";
+
+    public final static String CURRENT_REVIEW_3_TEXT = "REVIEW 3 TEXT";
 }

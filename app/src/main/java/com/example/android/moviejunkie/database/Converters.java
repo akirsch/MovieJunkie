@@ -8,7 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-public class Converters {
+class Converters {
 
     @TypeConverter
     public static ArrayList<String> fromString(String value) {
@@ -19,8 +19,7 @@ public class Converters {
     @TypeConverter
     public static String fromArrayList(ArrayList<String> list) {
         Gson gson = new Gson();
-        String json = gson.toJson(list);
-        return json;
+        return gson.toJson(list);
     }
 
 }

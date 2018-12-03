@@ -3,7 +3,6 @@ package com.example.android.moviejunkie;
 import android.app.LoaderManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.arch.persistence.room.Database;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
@@ -25,8 +24,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.example.android.moviejunkie.database.MovieDatabase;
 import com.example.android.moviejunkie.utilities.Constants;
 import com.example.android.moviejunkie.utilities.MovieLoader;
 import com.example.android.moviejunkie.utilities.Utility;
@@ -50,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private ArrayList<Movie> movieItems;
     private MovieAdapter movieAdapter;
     private Bundle preferenceStringBundle;
-    private MovieDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +82,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         // Attach the adapter to the RecyclerView to populate items
         recyclerView.setAdapter(movieAdapter);
-
-        // Initialize database
-        mDb = MovieDatabase.getInstance(getApplicationContext());
 
         // determine which preference option is currently selected
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);

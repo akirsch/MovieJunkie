@@ -3,6 +3,7 @@ package com.example.android.moviejunkie;
 import android.app.LoaderManager;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.Loader;
 import android.graphics.Color;
@@ -43,8 +44,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private ImageView thumbnailIv;
     private TextView titleTv;
     private TextView releaseDateTv;
-    private TextView[] trailerViewArray = new TextView[3];
-    private TextView[] reviewViewsArray = new TextView[3];
+    private final TextView[] trailerViewArray = new TextView[3];
+    private final TextView[] reviewViewsArray = new TextView[3];
     private TextView review_oneTv;
     private TextView review_twoTv;
     private TextView review_threeTv;
@@ -58,9 +59,10 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private ArrayList<String> movieReviews;
     private Movie movieWithTrailerAndReviewData;
     private Movie selectedMovie;
-    Boolean reviewOneIsShowing = false;
-    Boolean reviewTwoIsShowing = false;
-    Boolean reviewThreeIsShowing = false;
+    private Boolean reviewOneIsShowing = false;
+    private Boolean reviewTwoIsShowing = false;
+    private Boolean reviewThreeIsShowing = false;
+
 
     private MovieDatabase mDb;
 
@@ -91,9 +93,16 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         reviewViewsArray[1] = review_twoTv;
         reviewViewsArray[2] = review_threeTv;
 
+
+        if (savedInstanceState != null) {
+            review_oneTv.setText(savedInstanceState.getString(Constants.CURRENT_REVIEW_1_TEXT));
+            review_twoTv.setText(savedInstanceState.getString(Constants.CURRENT_REVIEW_2_TEXT));
+            review_threeTv.setText(savedInstanceState.getString(Constants.CURRENT_REVIEW_3_TEXT));
+        }
+
+
         // get reference to database of favorite movies
         mDb = MovieDatabase.getInstance(getApplicationContext());
-
 
         final Intent intentThatStartedThisActivity = getIntent();
 
@@ -154,6 +163,33 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         voterAverageRatingBar.setRating(selectedMovie.getVoteAverage());
 
 
+    }
+
+    /**
+     * use this method to store current text showing in the review text views so that its stored upon
+     * screen rotation
+     *
+     * @param outState bundle of data to be persisted upon configuration change
+     */
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(Constants.CURRENT_REVIEW_1_TEXT, review_oneTv.getText().toString());
+        outState.putString(Constants.CURRENT_REVIEW_2_TEXT, review_twoTv.getText().toString());
+        outState.putString(Constants.CURRENT_REVIEW_3_TEXT, review_threeTv.getText().toString());
+
+        super.onSaveInstanceState(outState);
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        review_oneTv.setText(savedInstanceState.getString(Constants.CURRENT_REVIEW_1_TEXT));
+        review_twoTv.setText(savedInstanceState.getString(Constants.CURRENT_REVIEW_2_TEXT));
+        review_threeTv.setText(savedInstanceState.getString(Constants.CURRENT_REVIEW_3_TEXT));
     }
 
     @Override
@@ -256,29 +292,50 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         return true;
     }
 
+    /**
+     * This method will set the favorite icon to be either filled in or empty depending on if the
+     * move selected is already in the favorite movie database
+     *
+     * @param menu the menu items for the details activity
+     * @return true
+     */
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu(final Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        MenuItem favoritesIcon = menu.getItem(0);
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
 
-        LiveData<Movie> movie = mDb.favoriteMovieDao().loadMovieById(selectedMovie.getMovieApiId());
+                final MenuItem favoritesIcon = menu.getItem(0);
+                Movie movie = mDb.favoriteMovieDao().loadMovieById(selectedMovie.getMovieApiId());
 
+                if (movie == null) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Drawable notSelectedAsFavoriteIcon = getDrawable(R.drawable.ic_favorite_border);
+                            assert notSelectedAsFavoriteIcon != null;
+                            notSelectedAsFavoriteIcon.setTint(getColor(R.color.colorAccent));
+                            favoritesIcon.setIcon(notSelectedAsFavoriteIcon);
+                        }
+                    });
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Drawable selectedAsFavoriteIcon = getDrawable(R.drawable.ic_favorite);
+                            assert selectedAsFavoriteIcon != null;
+                            selectedAsFavoriteIcon.setTint(getColor(R.color.colorAccent));
+                            favoritesIcon.setIcon(selectedAsFavoriteIcon);
+                        }
+                    });
 
+                }
+            }
+        });
 
-        if (movie == null) {
-            Drawable notSelectedAsFavoriteIcon = getDrawable(R.drawable.ic_favorite_border);
-            assert notSelectedAsFavoriteIcon != null;
-            notSelectedAsFavoriteIcon.setTint(getColor(R.color.colorAccent));
-            favoritesIcon.setIcon(notSelectedAsFavoriteIcon);
-        } else {
-            Drawable selectedAsFavoriteIcon = getDrawable(R.drawable.ic_favorite);
-            assert selectedAsFavoriteIcon != null;
-            selectedAsFavoriteIcon.setTint(getColor(R.color.colorAccent));
-            favoritesIcon.setIcon(selectedAsFavoriteIcon);
-        }
         return true;
-
     }
 
 
@@ -304,7 +361,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     }
 
 
-    public void setUpUI() {
+    private void setUpUI() {
         // Enable up navigation to parent Activity
         // find Toolbar view in layout
         Toolbar myToolbar = findViewById(R.id.toolbar);
@@ -315,14 +372,13 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         // set status bar to be transparent
         getWindow().setStatusBarColor(Color.TRANSPARENT);
 
-        // don't display any play trailer  or  review views in case there are no trailers available for this movie
+        // don't display any play trailer  or review views in case there are no trailers available for this movie
         playTrailerOneTv.setVisibility(View.GONE);
         playTrailerTwoTv.setVisibility(View.GONE);
         playTrailerThreeTv.setVisibility(View.GONE);
         review_oneTv.setVisibility(View.GONE);
         review_twoTv.setVisibility(View.GONE);
         review_threeTv.setVisibility(View.GONE);
-
 
 
     }
@@ -333,7 +389,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         Log.v(LOG_TAG, "on Start of Detail Activity has been called");
         getLoaderManager().restartLoader(0, movieDataBundle, this);
     }
-
 
     @Override
     public void onClick(View view) {
@@ -365,6 +420,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                             Uri.parse("vnd.youtube:" + thirdTrailerKey));
                     startActivity(intent);
                 }
+                break;
             case R.id.review_oneTv:
                 if (!reviewOneIsShowing) {
                     String firstMovieReview = movieReviews.get(0);
@@ -404,37 +460,52 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private void onFavoriteButtonClicked(MenuItem item) {
+    private void onFavoriteButtonClicked(final MenuItem item) {
 
-        LiveData<Movie> movie = mDb.favoriteMovieDao().loadMovieById(selectedMovie.getMovieApiId());
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
 
-        if (movie == null) {
-            Drawable selectedAsFavoriteIcon = getDrawable(R.drawable.ic_favorite);
-            selectedAsFavoriteIcon.setTint(getColor(R.color.colorAccent));
-            item.setIcon(selectedAsFavoriteIcon);
-            selectedMovie.setFavorite(true);
-            // If movie was not previously listed a favorite,
-            // when favorites button is clicked add this movie to favorite movie database
-            AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
+                final Movie movie = mDb.favoriteMovieDao().loadMovieById(selectedMovie.getMovieApiId());
+
+                if (movie == null) {
+
                     mDb.favoriteMovieDao().insertMovie(selectedMovie);
-                }
-            });
-        } else {
-            Drawable notSelectedAsFavoriteIcon = getDrawable(R.drawable.ic_favorite_border);
-            notSelectedAsFavoriteIcon.setTint(getColor(R.color.colorAccent));
-            item.setIcon(notSelectedAsFavoriteIcon);
-            selectedMovie.setFavorite(false);
-            // If movie was previously listed a favorite,
-            // when favorites button is clicked remove this movie from the favorite movie database
-            AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    mDb.favoriteMovieDao().deleteMovie(selectedMovie);
-                }
-            });
 
-        }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Drawable selectedAsFavoriteIcon = getDrawable(R.drawable.ic_favorite);
+                            assert selectedAsFavoriteIcon != null;
+                            selectedAsFavoriteIcon.setTint(getColor(R.color.colorAccent));
+                            item.setIcon(selectedAsFavoriteIcon);
+                            selectedMovie.setFavorite(true);
+                        }
+                    });
+                } else {
+                    // If movie was previously listed a favorite,
+                    // when favorites button is clicked remove this movie from the favorite movie database
+                    mDb.favoriteMovieDao().deleteMovie(movie);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Drawable notSelectedAsFavoriteIcon = getDrawable(R.drawable.ic_favorite_border);
+                            assert notSelectedAsFavoriteIcon != null;
+                            notSelectedAsFavoriteIcon.setTint(getColor(R.color.colorAccent));
+                            item.setIcon(notSelectedAsFavoriteIcon);
+                            selectedMovie.setFavorite(false);
+                        }
+                    });
+
+                }
+            }
+        });
+
     }
+
 }
+
+
+
+
